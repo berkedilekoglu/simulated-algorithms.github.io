@@ -36,7 +36,7 @@ It will open the main page. Select your algorithm and click Go Simulation! butto
 ## How can I simulate online?
 
 Just click:
->[https://berkedilekoglu.github.io/]
+>https://berkedilekoglu.github.io/
 
 Select your algorithm and click Go Simulation! button.
 
