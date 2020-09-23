@@ -20,7 +20,8 @@ var endTime = 0;
 var startTime = 0;
 
 function setup() {
-
+    if(fr > 0 && recWidth >0)
+    {
     createCanvas(windowWidth, windowHeight);
     frameRate(fr);
     heapArray = new heapSpace();
@@ -29,6 +30,11 @@ function setup() {
     index = Math.floor(heapArray.len()/ 2) - 1;
     index2 = Math.floor(heapArray.len()/ 2) - 1;
     startTime = window.performance.now();
+    }
+    else
+    {
+        noLoop();
+    }
     
 }
 function windowResized() 

@@ -18,7 +18,8 @@ var endTime = 0;
 var startTime = 0;
 
 function setup() {
-
+    if(fr > 0 && recWidth >0)
+    {
     createCanvas(windowWidth, windowHeight);
     frameRate(fr);
     radixArray = new radixSpace();
@@ -28,7 +29,11 @@ function setup() {
     
 
     startTime = window.performance.now();
-    
+    }
+    else
+    {
+        noLoop();
+    }
 }
 function windowResized() 
 {

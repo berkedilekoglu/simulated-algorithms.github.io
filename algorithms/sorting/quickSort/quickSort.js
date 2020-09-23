@@ -22,7 +22,8 @@ var numberOfComparison = 0;
 var endTime = 0;
 var startTime = 0;
 function setup() {
-
+    if(fr > 0 && recWidth >0)
+    {
     createCanvas(windowWidth, windowHeight);
     frameRate(fr);
     quickSpace = new quickSpace();
@@ -36,7 +37,11 @@ function setup() {
     quickStack.push(topIndex,0);
     topIndex++;
     quickStack.push(topIndex,quickSpace.len()-1);
-    
+    }
+    else
+    {
+        noLoop();
+    }
 
 }
 function windowResized() 

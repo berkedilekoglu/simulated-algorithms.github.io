@@ -14,7 +14,8 @@ var numberOfReplacement = 0;
 var numberOfComparison = 0;
 
 function setup() {
-
+    if(fr > 0 && recWidth >0)
+    {
     createCanvas(windowWidth, windowHeight);
     insertion = new insertionSpace();
     insertion.setup();
@@ -22,7 +23,11 @@ function setup() {
     frameRate(fr);
     background(0);
     startTime = window.performance.now();
-    
+    }
+    else
+    {
+        noLoop();
+    }
 }
 function windowResized() 
 {

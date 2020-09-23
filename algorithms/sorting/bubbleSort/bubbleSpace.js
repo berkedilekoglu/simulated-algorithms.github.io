@@ -8,15 +8,18 @@ class bubbleSpace
         this.myBoxes = [];
         this.yPositions = [];
         this.colors = [255,215,0]
+        
     }
     setup()
     {
+        
        
         var index = 0;
         this.y = Math.floor((Math.random() * windowHeight) + 0);
         this.yPositions.push(this.y);
         this.myBoxes[index] = createVector(this.x,this.yPositions[index])
         index++;
+        
         while(this.x + recWidth < width)
         {
             this.y = Math.floor((Math.random() * windowHeight) + 0);

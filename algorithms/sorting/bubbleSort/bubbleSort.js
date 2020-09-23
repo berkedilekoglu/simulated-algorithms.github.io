@@ -1,7 +1,7 @@
 alert("Please Expand Your Browsers' Window Before Simulation!");
 alert("After enter Rectangle Width and Frame Rate your simulation will start!");
-var recWidth = Number(window.prompt("Enter the rectangle width (Lower width -> High number of elements! 5 is recommended): "));
-var fr = Number(window.prompt("Enter the Frame Rate (100 is recommended! For more slow frames give lower numbers): "));
+var recWidth = Number(window.prompt("Enter the rectangle width (Lower width -> High number of elements! 5 is recommended): ",5));
+var fr = Number(window.prompt("Enter the Frame Rate (100 is recommended! For more slow frames give lower numbers): ",100));
 var index = 0;
 var control = 'selection';
 var replacing = false;
@@ -11,13 +11,21 @@ var endTime = 0;
 var startTime = 0;
 
 function setup() {
-
-    createCanvas(windowWidth, windowHeight);
-    bubble = new bubbleSpace();
-    bubble.setup();
-    bubble.show();
-    frameRate(fr);
-    startTime = window.performance.now();
+    if(fr > 0 && recWidth >0)
+    {
+        console.log("here2")
+        createCanvas(windowWidth, windowHeight);
+        bubble = new bubbleSpace();
+        bubble.setup();
+        bubble.show();
+        frameRate(fr);
+        startTime = window.performance.now();
+    }
+    else
+    {
+        noLoop();
+    }
+    
     
 }
 function windowResized() 
@@ -31,7 +39,6 @@ function windowResized()
 function draw() 
 {
     background(0);
-    
     if(index < bubble.len()-1)
     {
         

@@ -13,7 +13,8 @@ var runTime = 0;
 var control = 'selection';
 var begin = false;
 function setup() {
-
+    if(fr > 0 && recWidth >0)
+    {
     createCanvas(windowWidth, windowHeight);
     console.log("Width: "+windowWidth);
     console.log("Height: "+ windowHeight);
@@ -27,7 +28,11 @@ function setup() {
     mySpace.show();
 
     startTime = window.performance.now();
-
+    }
+    else
+    {
+        noLoop();
+    }
     
     
     
