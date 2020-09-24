@@ -240,6 +240,9 @@ function draw(){
     textSize(20);
     fill(211,211,211);
     text('Number Of Elements: '+ mergeArray.len().toString(), 10, 20);
+    textSize(20);
+    fill(211,211,211);
+    text('Merge Sort',windowWidth/3, 20);
     if(startCheck==false)
     {
         background(0);

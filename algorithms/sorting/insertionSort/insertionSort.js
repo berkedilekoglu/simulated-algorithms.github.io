@@ -152,7 +152,9 @@ function draw(){
     textSize(20);
     fill(211,211,211);
     text('Number Of Elements: '+ insertion.len().toString(), 10, 20);
-
+    textSize(20);
+    fill(211,211,211);
+    text('Insertion Sort',windowWidth/3, 20);
 
 
 
