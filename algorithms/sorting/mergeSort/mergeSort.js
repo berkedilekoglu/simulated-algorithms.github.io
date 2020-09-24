@@ -240,9 +240,7 @@ function draw(){
     textSize(20);
     fill(211,211,211);
     text('Number Of Elements: '+ mergeArray.len().toString(), 10, 20);
-    textSize(20);
-    fill(211,211,211);
-    text('Merge Sort',windowWidth/3, 20);
+    
     if(startCheck==false)
     {
         background(0);
@@ -315,15 +313,26 @@ function touchStarted() {
     }
     
   }
-
-function song(value)
-{
-    if (frameCount % 2 === 0 ) {
-        
-        osc.freq(value/2);
-    
-        envelope.play(osc, 0, 0.1);
-    }
-    
-}
+  function song(value)
+  {
+      if (frameCount % 2 === 0 ) {
+          if (value<10)
+          {
+              value = value*80;
+          }
+          else if(value<100)
+          {
+              value = value *15;
+          }
+          else if(value<200)
+          {
+              value = value *8;
+          }
+  
+          osc.freq(value);
+      
+          envelope.play(osc, 0, 0.1);
+      }
+      
+  }
 

@@ -126,9 +126,7 @@ function draw()
     textSize(20);
     fill(211,211,211);
     text('Number Of Elements: '+ mySpace.len().toString(), 10, 20);
-    textSize(20);
-    fill(211,211,211);
-    text('Selection Sort',windowWidth/3, 20);
+    
     
     if(startCheck==false)
     {

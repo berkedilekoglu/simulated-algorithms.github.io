@@ -195,9 +195,7 @@ function draw(){
     textSize(20);
     fill(211,211,211);
     text('Number Of Elements: '+ quickSpaceArray.len().toString(), 10, 20);
-    textSize(20);
-    fill(211,211,211);
-    text('Quick Sort',windowWidth/3, 20);
+    
 
     if(startCheck==false)
     {
