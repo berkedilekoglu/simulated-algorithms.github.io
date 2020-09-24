@@ -2,8 +2,8 @@ alert("Please Expand Your Browsers' Window Before Simulation!");
 
 alert("After enter Rectangle Width and Frame Rate your simulation will start!");
 
-var recWidth = Number(window.prompt("Enter the rectangle width (Lower width -> High number of elements! 5 is recommended): "));
-var fr = Number(window.prompt("Enter the Frame Rate (100 is recommended! For more slow frames give lower numbers): "));
+var recWidth = Number(window.prompt("Enter the rectangle width (Lower width -> High number of elements! 5 is recommended): ",5));
+var fr = Number(window.prompt("Enter the Frame Rate (100 is recommended! For more slow frames give lower numbers): ",100));
 var control2 = 'start';
 var control = 'leftPart';
 var timeOuter;
@@ -29,19 +29,41 @@ var numberOfComparison = 0;
 var endTime = 0;
 var startTime = 0;
 
-function setup() {
-    if(fr > 0 && recWidth >0)
-    {
-    createCanvas(windowWidth, windowHeight);
-    frameRate(fr);
-    mergeArray = new mergeSpace();
-    mergeArray.setup();
+let osc, envelope, fft;
+var startCheck = false;
+let scaleArray = [60, 62, 64, 65, 67, 69, 71, 72];
+let note = 0;
 
-    startTime = window.performance.now();
+function setup() {
+    noLoop();
+    if(startCheck==true)
+    {
+        if(fr > 0 && recWidth >0)
+        {
+            osc = new p5.SinOsc();
+            envelope = new p5.Env();
+            envelope.setADSR(0.001, 0.5, 0.1, 0.5);
+            envelope.setRange(1, 0);
+            osc.start();
+            fft = new p5.FFT();
+            
+            createCanvas(windowWidth, windowHeight);
+            frameRate(fr);
+            mergeArray = new mergeSpace();
+            mergeArray.setup();
+
+            startTime = window.performance.now();
+        }
+        else
+        {
+            noLoop();
+        }
     }
     else
     {
-        noLoop();
+        mergeArray = new mergeSpace();
+        
+        createCanvas(windowWidth, windowHeight);
     }
 }
 function windowResized() 
@@ -121,6 +143,7 @@ function draw(){
                         {
                             numberOfComparison ++;
                             numberOfReplacement++;
+                            song(leftArray[leftIndex]);
                             mergingLeft(index,leftIndex,leftArray);
                             leftIndex++;
                            
@@ -129,6 +152,7 @@ function draw(){
                         {
                             numberOfComparison ++;
                             numberOfReplacement++;
+                            song(rightArray[rightIndex]);
                             mergingRight(index,rightArray,rightIndex);
                             rightIndex++;
                         }
@@ -147,6 +171,7 @@ function draw(){
                     {
                         numberOfComparison ++;
                         numberOfReplacement++;
+                        song(leftArray[leftIndex]);
                         mergeLeft(index,leftArray,leftIndex)
                         leftIndex++;
                         index++;
@@ -163,6 +188,7 @@ function draw(){
                     {
                         numberOfComparison ++;
                         numberOfReplacement++;
+                        song(rightArray[rightIndex]);
                         mergeRight(index,rightArray,rightIndex)
                         rightIndex++;
                         index++;
@@ -214,6 +240,13 @@ function draw(){
     textSize(20);
     fill(211,211,211);
     text('Number Of Elements: '+ mergeArray.len().toString(), 10, 20);
+    if(startCheck==false)
+    {
+        background(0);
+        textSize(20);
+        fill(211,211,211);
+        text('Click Here To Start', 10, 90);
+    }
     mergeArray.show();
     
 }
@@ -265,6 +298,29 @@ function mergeRight(index,rightArray,rightIndex)
 {
     mergeArray.selectRight(index);
     mergeArray.set(index,rightArray[rightIndex]);
+    
+}
+
+function touchStarted() {
+    if(startCheck==false)
+    {
+        getAudioContext().resume()
+        startCheck = true;
+        setup();
+        loop();
+       
+    }
+    
+  }
+
+function song(value)
+{
+    if (frameCount % 2 === 0 ) {
+        
+        osc.freq(value/2);
+    
+        envelope.play(osc, 0, 0.1);
+    }
     
 }
 

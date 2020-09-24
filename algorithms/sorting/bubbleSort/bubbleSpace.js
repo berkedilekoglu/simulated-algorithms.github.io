@@ -74,6 +74,10 @@ class bubbleSpace
    {
        return this.myBoxes.length;
    }
+   getValue(index)
+   {
+       return this.myBoxes[index].y;
+   }
 
 
     

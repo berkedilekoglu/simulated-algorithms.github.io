@@ -2,8 +2,8 @@ alert("Please Expand Your Browsers' Window Before Simulation!");
 
 alert("After enter Rectangle Width and Frame Rate your simulation will start!");
 
-var recWidth = Number(window.prompt("Enter the rectangle width (Lower width -> High number of elements! 5 is recommended): "));
-var fr = Number(window.prompt("Enter the Frame Rate (100 is recommended! For more slow frames give lower numbers): "));
+var recWidth = Number(window.prompt("Enter the rectangle width (Lower width -> High number of elements! 5 is recommended): ",5));
+var fr = Number(window.prompt("Enter the Frame Rate (100 is recommended! For more slow frames give lower numbers): ",100));
 var control2 = 'topFree';
 var control = 'start';
 var endTime = 0;
@@ -21,26 +21,56 @@ var numberOfReplacement = 0;
 var numberOfComparison = 0;
 var endTime = 0;
 var startTime = 0;
+
+let osc, envelope, fft;
+var startCheck = false;
+let scaleArray = [60, 62, 64, 65, 67, 69, 71, 72];
+let note = 0;
+
 function setup() {
-    if(fr > 0 && recWidth >0)
+    noLoop();
+    if(startCheck==true)
     {
-    createCanvas(windowWidth, windowHeight);
-    frameRate(fr);
-    quickSpace = new quickSpace();
-    quickSpace.setup();
+        if(fr > 0 && recWidth >0)
+        {
+            osc = new p5.SinOsc();
+            envelope = new p5.Env();
+            envelope.setADSR(0.001, 0.5, 0.1, 0.5);
+            envelope.setRange(1, 0);
+            osc.start();
+            fft = new p5.FFT();
+            
+            createCanvas(windowWidth, windowHeight);
+            frameRate(fr);
+            quickSpaceArray = new quickSpace();
+            quickSpaceArray.setup();
 
-    quickStack = new quickStack();
-    quickStack.setup(quickSpace.len());
+            quickStackArray = new quickStack();
+            quickStackArray.setup(quickSpaceArray.len());
 
-    startTime = window.performance.now();
-    topIndex++;
-    quickStack.push(topIndex,0);
-    topIndex++;
-    quickStack.push(topIndex,quickSpace.len()-1);
-    }
+            startTime = window.performance.now();
+            topIndex++;
+            quickStackArray.push(topIndex,0);
+            topIndex++;
+            quickStackArray.push(topIndex,quickSpaceArray.len()-1);
+        }
+        else
+        {
+            noLoop();
+        }
+    
+    } 
     else
     {
-        noLoop();
+        quickSpaceArray = new quickSpace();
+        quickSpaceArray.setup();
+        quickStackArray = new quickStack();
+        quickStackArray.setup(quickSpaceArray.len());
+        topIndex++;
+        quickStackArray.push(topIndex,0);
+        topIndex++;
+        quickStackArray.push(topIndex,quickSpaceArray.len()-1);
+        createCanvas(windowWidth, windowHeight);
     }
 
 }
@@ -59,18 +89,18 @@ function draw(){
         if(control == 'start')
         {
 
-            rightIndex = quickStack.pop(topIndex);
+            rightIndex = quickStackArray.pop(topIndex);
             // console.log(topIndex)
-            // console.log(quickStack)
+            // console.log(quickStackArray)
             topIndex--;
-            leftIndex = quickStack.pop(topIndex);
+            leftIndex = quickStackArray.pop(topIndex);
             topIndex--;
             control = 'pivot';
             j = leftIndex;
-            x = quickSpace.at(rightIndex);
+            x = quickSpaceArray.at(rightIndex);
             pivot = leftIndex -1;
-            quickSpace.selectPivot(rightIndex);
-            quickSpace.selectRight(leftIndex);
+            quickSpaceArray.selectPivot(rightIndex);
+            quickSpaceArray.selectRight(leftIndex);
         }
         
 
@@ -79,25 +109,29 @@ function draw(){
             if(j <= (rightIndex -1))
             {
                 numberOfComparison++;
-                if(quickSpace.at(j)<=x)
+                if(quickSpaceArray.at(j)<=x)
                 {
 
                     pivot++;
-                    quickSpace.swap(pivot,j);
+                    song(pivot)
+                    song(j)
+                    quickSpaceArray.swap(pivot,j);
                     numberOfReplacement++;
                 }
                 j++;
-                quickSpace.selectLeft(j);
+                quickSpaceArray.selectLeft(j);
                 
             }
             else
             {
                 
-                quickSpace.selectLeft(rightIndex);
-                quickSpace.swap(pivot+1,rightIndex);
+                quickSpaceArray.selectLeft(rightIndex);
+                song(pivot+1)
+                song(rightIndex)
+                quickSpaceArray.swap(pivot+1,rightIndex);
                 numberOfReplacement++;
                 pivot++;
-                quickSpace.selectPivot(pivot);
+                quickSpaceArray.selectPivot(pivot);
                 
                 control = 'leftstack';
             }
@@ -108,9 +142,9 @@ function draw(){
             if(pivot-1> leftIndex)
             {
                 topIndex++;
-                quickStack.push(topIndex,leftIndex);
+                quickStackArray.push(topIndex,leftIndex);
                 topIndex++;
-                quickStack.push(topIndex,pivot-1);
+                quickStackArray.push(topIndex,pivot-1);
                 
                 
             }
@@ -122,9 +156,9 @@ function draw(){
             if(pivot+1 < rightIndex)
             {
                 topIndex++;
-                quickStack.push(topIndex,pivot+1);
+                quickStackArray.push(topIndex,pivot+1);
                 topIndex++;
-                quickStack.push(topIndex,rightIndex);
+                quickStackArray.push(topIndex,rightIndex);
                 
                 
                 
@@ -135,7 +169,7 @@ function draw(){
                 control2 = 'topProblem';
             }
             control = 'start';
-            quickSpace.releaseAll();
+            quickSpaceArray.releaseAll();
         }
         
         
@@ -160,14 +194,56 @@ function draw(){
     text('Number Of Replacements: '+ numberOfReplacement.toString(), 10, 40);
     textSize(20);
     fill(211,211,211);
-    text('Number Of Elements: '+ quickSpace.len().toString(), 10, 20);
-    quickSpace.show();
+    text('Number Of Elements: '+ quickSpaceArray.len().toString(), 10, 20);
+
+
+    if(startCheck==false)
+    {
+        background(0);
+        textSize(20);
+        fill(211,211,211);
+        text('Click Here To Start', 10, 90);
+    }
+    quickSpaceArray.show();
     
 
     
     
 }
+function touchStarted() {
+    if(startCheck==false)
+    {
+        getAudioContext().resume()
+        startCheck = true;
+        setup();
+        loop();
+       
+    }
+    
+  }
 
+function song(value)
+{
+    if (frameCount % 2 === 0 ) {
+        if (value<10)
+        {
+            value = value*80;
+        }
+        else if(value<100)
+        {
+            value = value *15;
+        }
+        else if(value<200)
+        {
+            value = value *8;
+        }
+
+        osc.freq(value);
+    
+        envelope.play(osc, 0, 0.1);
+    }
+    
+}
 
 
 

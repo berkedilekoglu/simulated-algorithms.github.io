@@ -46,7 +46,6 @@ class sortingSpace
     
     if (this.myBoxes[currentIndex].y < this.myBoxes[minIndex].y)
     {
-        console.log(this.myBoxes[currentIndex].y);
         return currentIndex;
     }
 
@@ -74,6 +73,9 @@ class sortingSpace
        return this.myBoxes.length;
    }
 
-
-    
+   at(index)
+    {
+        return this.myBoxes[index].y;
+    }
+        
 }

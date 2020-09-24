@@ -2,8 +2,8 @@ alert("Please Expand Your Browsers' Window Before Simulation!");
 
 alert("After enter Rectangle Width and Frame Rate your simulation will start!");
 
-var recWidth = Number(window.prompt("Enter the rectangle width (Lower width -> High number of elements! 5 is recommended): "));
-var fr = Number(window.prompt("Enter the Frame Rate (100 is recommended! For more slow frames give lower numbers): "));
+var recWidth = Number(window.prompt("Enter the rectangle width (Lower width -> High number of elements! 5 is recommended): ",5));
+var fr = Number(window.prompt("Enter the Frame Rate (100 is recommended! For more slow frames give lower numbers): ",100));
 var control2 = 'start';
 var control = 'start';
 
@@ -17,22 +17,43 @@ var numberOfComparison = 0;
 var endTime = 0;
 var startTime = 0;
 
+let osc, envelope, fft;
+var startCheck = false;
+let scaleArray = [60, 62, 64, 65, 67, 69, 71, 72];
+let note = 0;
+
 function setup() {
-    if(fr > 0 && recWidth >0)
+    noLoop();
+    if(startCheck==true)
     {
-    createCanvas(windowWidth, windowHeight);
-    frameRate(fr);
-    radixArray = new radixSpace();
+        if(fr > 0 && recWidth >0)
+        {
+            osc = new p5.SinOsc();
+            envelope = new p5.Env();
+            envelope.setADSR(0.001, 0.5, 0.1, 0.5);
+            envelope.setRange(1, 0);
+            osc.start();
+            fft = new p5.FFT();
 
-    radixArray.setup();
-    maxValue = getMax();
-    
+            createCanvas(windowWidth, windowHeight);
+            frameRate(fr);
+            radixArray = new radixSpace();
 
-    startTime = window.performance.now();
+            radixArray.setup();
+            maxValue = getMax();
+            
+
+            startTime = window.performance.now();
+        }
+        else
+        {
+            noLoop();
+        }
     }
     else
     {
-        noLoop();
+        radixArray = new radixSpace();
+        createCanvas(windowWidth, windowHeight);
     }
 }
 function windowResized() 
@@ -57,6 +78,7 @@ function draw(){
         else if(control=='step1' && i < radixArray.len())
         {
             var index = Math.floor((radixArray.at(i)/exp1));
+            
             countArray[index%10] += 1
             i++;
         }
@@ -79,6 +101,7 @@ function draw(){
         {
             
             numberOfComparison++;
+            song(radixArray.at(i))
             var index = Math.floor((radixArray.at(i)/exp1));
             radixArray.selectRight(i);
             outputArray[ countArray[(index)%10] - 1] = radixArray.at(i)
@@ -94,6 +117,7 @@ function draw(){
         else if(control=='step4' && i < radixArray.len())
         {
             radixArray.selectLeft(i);
+            song(radixArray.at(i));
             var value = outputArray[i];
             numberOfReplacement++;
             radixArray.set(i,value);
@@ -128,6 +152,14 @@ function draw(){
     textSize(20);
     fill(211,211,211);
     text('Number Of Elements: '+ radixArray.len().toString(), 10, 20);
+    if(startCheck==false)
+    {
+        background(0);
+        textSize(20);
+        fill(211,211,211);
+        text('Click Here To Start', 10, 90);
+    }
+
     radixArray.show();
     
     // console.log(outputArray)
@@ -156,4 +188,39 @@ function createArray(l)
         myArray[i] = 0;
     }
     return myArray;
+}
+
+function touchStarted() {
+    if(startCheck==false)
+    {
+        getAudioContext().resume()
+        startCheck = true;
+        setup();
+        loop();
+       
+    }
+    
+  }
+
+function song(value)
+{
+    if (frameCount % 2 === 0 ) {
+        if (value<10)
+        {
+            value = value*80;
+        }
+        else if(value<100)
+        {
+            value = value *15;
+        }
+        else if(value<200)
+        {
+            value = value *8;
+        }
+
+        osc.freq(value);
+    
+        envelope.play(osc, 0, 0.1);
+    }
+    
 }

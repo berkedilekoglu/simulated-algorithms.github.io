@@ -1,5 +1,4 @@
 alert("Please Expand Your Browsers' Window Before Simulation!");
-alert("After enter Rectangle Width and Frame Rate your simulation will start!");
 var recWidth = Number(window.prompt("Enter the rectangle width (Lower width -> High number of elements! 5 is recommended): ",5));
 var fr = Number(window.prompt("Enter the Frame Rate (100 is recommended! For more slow frames give lower numbers): ",100));
 var index = 0;
@@ -9,22 +8,47 @@ var numberOfReplacement = 0;
 var numberOfComparison = 0;
 var endTime = 0;
 var startTime = 0;
+let osc, envelope, fft;
+var startCheck = false;
+let scaleArray = [60, 62, 64, 65, 67, 69, 71, 72];
+let note = 0;
 
 function setup() {
-    if(fr > 0 && recWidth >0)
+    noLoop();
+    if(startCheck==true)
     {
-        console.log("here2")
-        createCanvas(windowWidth, windowHeight);
-        bubble = new bubbleSpace();
-        bubble.setup();
-        bubble.show();
-        frameRate(fr);
-        startTime = window.performance.now();
+        if(fr > 0 && recWidth >0)
+        {
+            
+    
+            osc = new p5.SinOsc();
+            envelope = new p5.Env();
+            envelope.setADSR(0.001, 0.5, 0.1, 0.5);
+            envelope.setRange(1, 0);
+            osc.start();
+            fft = new p5.FFT();
+
+
+            createCanvas(windowWidth, windowHeight);
+            bubble = new bubbleSpace();
+            bubble.setup();
+            bubble.show();
+            frameRate(fr);
+            startTime = window.performance.now();
+        }
+        else
+        {
+            
+        }
     }
     else
     {
-        noLoop();
+        bubble = new bubbleSpace();
+        
+        createCanvas(windowWidth, windowHeight);
+        
     }
+    
     
     
 }
@@ -39,14 +63,21 @@ function windowResized()
 function draw() 
 {
     background(0);
+    
     if(index < bubble.len()-1)
     {
+        console.log(bubble.getValue(index));
+        var mynote = bubble.getValue(index);
+        song(mynote);
         
         if(control == 'selection')
         {
             
+            
             bubble.select(index);
             control = 'replace';
+            
+
         }
         else if(control == 'replace')
         {
@@ -91,10 +122,40 @@ function draw()
     textSize(20);
     fill(211,211,211);
     text('Number Of Elements: '+ bubble.len().toString(), 10, 20);
-    
+
+    if(startCheck==false)
+    {
+        background(0);
+        textSize(20);
+        fill(211,211,211);
+        text('Click Here To Start', 10, 90);
+    }
     
     bubble.show()
 
+   
     
+}
+
+function touchStarted() {
+    if(startCheck==false)
+    {
+        getAudioContext().resume()
+        startCheck = true;
+        setup();
+        loop();
+       
+    }
+    
+  }
+
+function song(value)
+{
+    if (frameCount % 2 === 0 ) {
+        
+        osc.freq(value/2);
+    
+        envelope.play(osc, 0, 0.1);
+    }
     
 }
