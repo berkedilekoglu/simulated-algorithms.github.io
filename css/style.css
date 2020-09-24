@@ -136,6 +136,10 @@
     margin: auto;
     
 }
+.sorting-cards .card-img-top
+{
+    height: 40%;
+}
 .sorting-cards{
     width: 50%;
     margin: auto;
